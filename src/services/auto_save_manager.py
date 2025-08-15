@@ -195,29 +195,36 @@ class AutoSaveManager:
     def _serialize_data_safely(self, data):
         """Serializa dados de forma segura evitando referências circulares"""
         try:
-            if data is None:
-                return None
+            # Detecta e remove referências circulares
+            seen = set()
             
-            # Para objetos simples, retorna diretamente
-            if isinstance(data, (str, int, float, bool)):
-                return data
+            def remove_circular_refs(obj, path="root"):
+                obj_id = id(obj)
+                if obj_id in seen:
+                    return f"[Circular reference at {path}]"
+                
+                if isinstance(obj, (str, int, float, bool, type(None))):
+                    return obj
+                
+                seen.add(obj_id)
+                
+                try:
+                    if isinstance(obj, dict):
+                        result = {}
+                        for key, value in list(obj.items())[:50]:  # Limita a 50 chaves
+                            try:
+                                result[str(key)] = remove_circular_refs(value, f"{path}.{key}")
+                            except Exception as e:
+                                result[str(key)] = f"[Erro na serialização: {str(e)}]"
+                        return result
+                    elif isinstance(obj, list):
+                        return [remove_circular_refs(item, f"{path}[{i}]") for i, item in enumerate(obj[:20])]
+                    else:
+                        return str(obj)[:500]
+                finally:
+                    seen.discard(obj_id)
             
-            # Para listas, processa cada item
-            if isinstance(data, list):
-                return [self._serialize_item_safely(item) for item in data[:50]]  # Limita a 50 itens
-            
-            # Para dicionários, processa cada chave-valor
-            if isinstance(data, dict):
-                safe_dict = {}
-                for key, value in list(data.items())[:100]:  # Limita a 100 chaves
-                    try:
-                        safe_dict[str(key)] = self._serialize_item_safely(value)
-                    except Exception as e:
-                        safe_dict[str(key)] = f"[Erro na serialização: {str(e)}]"
-                return safe_dict
-            
-            # Para outros tipos, converte para string
-            return str(data)[:1000]
+            return remove_circular_refs(data)
             
         except Exception as e:
             logger.error(f"Erro na serialização segura: {e}")

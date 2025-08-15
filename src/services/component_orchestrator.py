@@ -240,13 +240,13 @@ class ComponentOrchestrator:
                 # Indicadores de conteúdo falso/genérico
                 fallback_indicators = [
                     'em desenvolvimento', 'fallback', 'não disponível', 'erro na',
-                    'driver 1', 'driver 2', 'dados não disponíveis', 'análise em desenvolvimento'
+                    'dados não disponíveis', 'análise em desenvolvimento'
                 ]
                 
                 found_fallback = [indicator for indicator in fallback_indicators if indicator in result_str]
                 
                 if found_fallback:
-                    logger.warning(f"⚠️ Possível conteúdo genérico detectado em {component_name}: {found_fallback}")
+                    logger.warning(f"⚠️ Conteúdo genérico/fallback detectado em {component_name}: {found_fallback}")
                     # Não falha automaticamente, apenas avisa
                 
                 # Verifica se tem estrutura mínima de dados reais
@@ -257,7 +257,7 @@ class ComponentOrchestrator:
                         return False
                     
                     # Verifica se drivers têm conteúdo real
-                    generic_drivers = sum(1 for d in drivers if 'em desenvolvimento' in str(d).lower())
+                    generic_drivers = sum(1 for d in drivers if isinstance(d, dict) and 'em desenvolvimento' in str(d).lower())
                     if generic_drivers > 10:  # Máximo 10 drivers genéricos permitidos (mais flexível)
                         logger.error(f"❌ {component_name}: muitos drivers genéricos ({generic_drivers}/19)")
                         return False

@@ -211,7 +211,7 @@ class AIManager:
                         )
                         response_text = response.text
                     elif provider_name == 'groq' and client:
-                        response = client.generate(prompt, max_tokens=min(max_tokens, 8192))
+                        response = client._make_request(prompt, max_tokens=min(max_tokens, 8192), temperature=temperature)
                         response_text = response
                     elif provider_name == 'openai' and client:
                         response = client.chat.completions.create(
@@ -284,7 +284,7 @@ class AIManager:
             return self._generate_basic_response(prompt)
     
     def generate_analysis(self, prompt: str, max_tokens: int = 2000, temperature: float = 0.7) -> str:
-        """Alias para generate_content para compatibilidade"""
+        """Gera análise usando os provedores de IA disponíveis"""
         return self.generate_content(prompt, max_tokens, temperature)
 
 

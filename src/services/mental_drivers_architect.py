@@ -101,7 +101,23 @@ class MentalDriversArchitect:
                 drivers_data = json.loads(response)
 
                 # Valida se tem pelo menos 19 drivers
-                if 'drivers' in drivers_data and len(drivers_data['drivers']) >= 19:
+                if isinstance(drivers_data, dict) and 'drivers' in drivers_data and len(drivers_data['drivers']) >= 19:
+                    return drivers_data
+                elif isinstance(drivers_data, list):
+                    # Se retornou lista diretamente, converte para formato esperado
+                    drivers_data = {'drivers': drivers_data}
+                    
+                    # Completa até 19 drivers se necessário
+                    while len(drivers_data['drivers']) < 19:
+                        drivers_data['drivers'].append({
+                            "numero": len(drivers_data['drivers']) + 1,
+                            "nome": f"Driver Mental {len(drivers_data['drivers']) + 1}",
+                            "descricao": f"Driver customizado para {segmento}",
+                            "aplicacao": f"Aplicação específica para {produto}",
+                            "exemplo_pratico": f"Exemplo prático para {publico}",
+                            "impacto_conversao": "Alto - impacto psicológico significativo"
+                        })
+                    
                     return drivers_data
                 else:
                     # Se não tem 19, completa

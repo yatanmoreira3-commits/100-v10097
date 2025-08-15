@@ -133,7 +133,7 @@ def create_app():
                 'version': '2.0.0',
                 'services': {
                     'ai_providers': {
-                        'available': len([p for p, status in ai_status.items() if 'available' in str(status)]),
+                        'available': len([p for p, status in ai_status.items() if isinstance(status, str) and 'available' in status]),
                         'total': len(ai_status),
                         'providers': ai_status
                     },

@@ -50,7 +50,7 @@ class GroqClient:
         
         return self._make_request(prompt, max_tokens)
     
-    def _make_request(self, prompt: str, max_tokens: int) -> Optional[str]:
+    def _make_request(self, prompt: str, max_tokens: int, temperature: float = 0.7) -> Optional[str]:
         """Faz requisição para Groq API"""
         
         try:
@@ -70,7 +70,7 @@ class GroqClient:
                     }
                 ],
                 "max_tokens": max_tokens,
-                "temperature": 0.7,
+                "temperature": temperature,
                 "stream": False
             }
             

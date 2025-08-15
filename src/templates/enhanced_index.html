@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARQV30 Enhanced v2.0 - Análise Ultra-Detalhada</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <div class="logo-icon">A</div>
+                <div class="logo-text">
+                    <div class="logo-title">ARQV30</div>
+                    <div class="logo-subtitle">Enhanced v2.0</div>
+                </div>
+            </a>
+            <nav class="header-nav">
+                <a href="/" class="nav-link active">Análise</a>
+                <a href="/unified" class="nav-link">Unificada</a>
+                <a href="/forensic" class="nav-link">Forense</a>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    Sistema Online
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span>🚀</span>
+                        Sistema Ultra-Robusto Ativo
+                    </div>
+                    <h1 class="hero-title">
+                        <span class="hero-gradient">Análise Ultra-Detalhada</span><br>
+                        de Mercado
+                    </h1>
+                    <p class="hero-subtitle">
+                        Sistema profissional de análise com 19 drivers mentais, avatar arqueológico 
+                        e arsenal psicológico completo baseado em dados reais.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="container">
+            <div class="main-card">
+                <div class="card-header">
+                    <h2 class="card-title">🎯 Análise de Mercado Profissional</h2>
+                    <p class="card-subtitle">Configure sua análise personalizada</p>
+                </div>
+                
+                <div class="card-body">
+                    <form id="analysisForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="segmento" class="form-label required">
+                                    <span>📊</span>
+                                    Segmento de Mercado
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="segmento" 
+                                    name="segmento" 
+                                    class="form-input" 
+                                    placeholder="Ex: tecnologia médica, consultoria empresarial"
+                                    required
+                                >
+                                <div class="form-hint">
+                                    <span>💡</span>
+                                    Seja específico para análise mais precisa
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="produto" class="form-label required">
+                                    <span>🎯</span>
+                                    Produto/Serviço
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="produto" 
+                                    name="produto" 
+                                    class="form-input" 
+                                    placeholder="Descreva seu produto ou serviço"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="publico_alvo" class="form-label">
+                                    <span>👥</span>
+                                    Público-Alvo
+                                </label>
+                                <textarea 
+                                    id="publico_alvo" 
+                                    name="publico_alvo" 
+                                    class="form-input form-textarea" 
+                                    placeholder="Descreva seu público-alvo ideal"
+                                ></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contexto_adicional" class="form-label">
+                                    <span>📋</span>
+                                    Contexto Adicional
+                                </label>
+                                <textarea 
+                                    id="contexto_adicional" 
+                                    name="contexto_adicional" 
+                                    class="form-input form-textarea" 
+                                    placeholder="Informações adicionais relevantes"
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary btn-large">
+                                <span>🚀</span>
+                                Executar Análise Ultra-Detalhada
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Progress Container -->
+            <div id="progressContainer" class="progress-container" style="display: none;">
+                <div class="progress-header">
+                    <div class="progress-title">
+                        <span>🔬</span>
+                        Executando Análise Ultra-Detalhada
+                    </div>
+                    <div class="progress-percentage">0%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;"></div>
+                </div>
+                <div class="progress-status">
+                    Preparando análise...
+                </div>
+            </div>
+
+            <!-- Session Controls -->
+            <div class="session-controls" style="display: none;">
+                <h3>
+                    <span>⚙️</span>
+                    Controles da Sessão
+                </h3>
+                <div class="btn-group">
+                    <button id="pauseBtn" class="btn btn-secondary">
+                        <span>⏸️</span>
+                        Pausar
+                    </button>
+                    <button id="resumeBtn" class="btn btn-secondary" style="display: none;">
+                        <span>▶️</span>
+                        Continuar
+                    </button>
+                    <button id="saveBtn" class="btn btn-secondary">
+                        <span>💾</span>
+                        Salvar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sessions List -->
+            <div class="session-controls">
+                <h3>
+                    <span>📂</span>
+                    Sessões Salvas
+                    <button id="refreshSessionsBtn" class="btn btn-secondary" style="margin-left: auto;">
+                        <span>🔄</span>
+                        Atualizar
+                    </button>
+                </h3>
+                <div id="sessionsList">
+                    <!-- Sessões serão carregadas aqui -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/analysis.js"></script>
+</body>
+</html>
