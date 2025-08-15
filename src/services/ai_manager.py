@@ -211,7 +211,7 @@ class AIManager:
                         )
                         response_text = response.text
                     elif provider_name == 'groq' and client:
-                        response = client.generate(prompt, max_tokens=min(max_tokens, 8192), temperature=temperature)
+                        response = client.generate(prompt, max_tokens=min(max_tokens, 8192))
                         response_text = response
                     elif provider_name == 'openai' and client:
                         response = client.chat.completions.create(
@@ -282,6 +282,10 @@ class AIManager:
         except Exception as e:
             logger.error(f"❌ Erro crítico no AI Manager: {e}")
             return self._generate_basic_response(prompt)
+    
+    def generate_analysis(self, prompt: str, max_tokens: int = 2000, temperature: float = 0.7) -> str:
+        """Alias para generate_content para compatibilidade"""
+        return self.generate_content(prompt, max_tokens, temperature)
 
 
     def _generate_basic_response(self, prompt: str) -> str:

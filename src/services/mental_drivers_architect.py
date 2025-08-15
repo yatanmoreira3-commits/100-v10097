@@ -57,8 +57,6 @@ class MentalDriversArchitect:
     def generate_custom_drivers(self, segmento: str, produto: str, publico: str, web_data: Dict = None, social_data: Dict = None) -> Dict[str, Any]:
         """Gera drivers mentais customizados baseados nos dados fornecidos"""
         try:
-            # Nota: A importação de ai_manager foi movida para dentro do método para evitar problemas de circularidade.
-            # Em um projeto maior, considere um gerenciador de dependências ou estrutura mais robusta.
             from services.ai_manager import ai_manager
 
             prompt = f"""

@@ -141,7 +141,7 @@ class AutoSaveManager:
             save_data = {
                 "etapa": nome_etapa,
                 "status": status,
-                "dados": dados,
+                "dados": self._serialize_data_safely(dados),
                 "timestamp": timestamp,
                 "timestamp_iso": datetime.fromtimestamp(timestamp).isoformat(),
                 "session_id": self.current_session_id,
@@ -161,22 +161,7 @@ class AutoSaveManager:
                 f.write("=" * 50 + "\n")
 
                 # Escreve dados de forma legível (não JSON bruto)
-                if isinstance(dados, dict):
-                    for key, value in dados.items():
-                        f.write(f"\n{key.upper()}:\n")
-                        if isinstance(value, list):
-                            for item in value[:10]:  # Limita a 10 itens
-                                f.write(f"• {str(item)[:200]}\n")
-                        elif isinstance(value, dict):
-                            for subkey, subvalue in list(value.items())[:5]:  # Limita a 5 subitens
-                                f.write(f"  {subkey}: {str(subvalue)[:100]}\n")
-                        else:
-                            f.write(f"{str(value)[:500]}\n")
-                elif isinstance(dados, list):
-                    for i, item in enumerate(dados[:20], 1):  # Limita a 20 itens
-                        f.write(f"{i}. {str(item)[:200]}\n")
-                else:
-                    f.write(f"DADOS: {str(dados)[:1000]}\n")
+                self._write_data_safely(f, dados)
 
             # Log de sucesso
             logger.info(f"💾 Etapa '{nome_etapa}' salva: {filepath}")
@@ -206,6 +191,86 @@ class AutoSaveManager:
                 logger.critical(f"🚨 FALHA CRÍTICA no salvamento de emergência: {emergency_error}")
 
             return str(emergency_path)
+    
+    def _serialize_data_safely(self, data):
+        """Serializa dados de forma segura evitando referências circulares"""
+        try:
+            if data is None:
+                return None
+            
+            # Para objetos simples, retorna diretamente
+            if isinstance(data, (str, int, float, bool)):
+                return data
+            
+            # Para listas, processa cada item
+            if isinstance(data, list):
+                return [self._serialize_item_safely(item) for item in data[:50]]  # Limita a 50 itens
+            
+            # Para dicionários, processa cada chave-valor
+            if isinstance(data, dict):
+                safe_dict = {}
+                for key, value in list(data.items())[:100]:  # Limita a 100 chaves
+                    try:
+                        safe_dict[str(key)] = self._serialize_item_safely(value)
+                    except Exception as e:
+                        safe_dict[str(key)] = f"[Erro na serialização: {str(e)}]"
+                return safe_dict
+            
+            # Para outros tipos, converte para string
+            return str(data)[:1000]
+            
+        except Exception as e:
+            logger.error(f"Erro na serialização segura: {e}")
+            return f"[Dados não serializáveis: {type(data).__name__}]"
+    
+    def _serialize_item_safely(self, item):
+        """Serializa um item individual de forma segura"""
+        try:
+            if isinstance(item, (str, int, float, bool, type(None))):
+                return item
+            elif isinstance(item, dict):
+                # Para dicionários aninhados, limita profundidade
+                safe_dict = {}
+                for k, v in list(item.items())[:20]:  # Limita a 20 chaves
+                    if isinstance(v, (str, int, float, bool, type(None))):
+                        safe_dict[str(k)] = v
+                    else:
+                        safe_dict[str(k)] = str(v)[:200]  # Converte para string limitada
+                return safe_dict
+            elif isinstance(item, list):
+                return [str(subitem)[:100] for subitem in item[:10]]  # Limita a 10 itens
+            else:
+                return str(item)[:200]
+        except:
+            return "[Item não serializável]"
+    
+    def _write_data_safely(self, file_handle, dados):
+        """Escreve dados de forma segura no arquivo"""
+        try:
+            if isinstance(dados, dict):
+                for key, value in list(dados.items())[:50]:  # Limita a 50 chaves
+                    try:
+                        file_handle.write(f"\n{str(key).upper()}:\n")
+                        if isinstance(value, list):
+                            for item in value[:10]:  # Limita a 10 itens
+                                file_handle.write(f"• {str(item)[:200]}\n")
+                        elif isinstance(value, dict):
+                            for subkey, subvalue in list(value.items())[:5]:  # Limita a 5 subitens
+                                file_handle.write(f"  {str(subkey)}: {str(subvalue)[:100]}\n")
+                        else:
+                            file_handle.write(f"{str(value)[:500]}\n")
+                    except Exception as e:
+                        file_handle.write(f"  [Erro ao escrever {key}: {str(e)}]\n")
+            elif isinstance(dados, list):
+                for i, item in enumerate(dados[:20], 1):  # Limita a 20 itens
+                    try:
+                        file_handle.write(f"{i}. {str(item)[:200]}\n")
+                    except Exception as e:
+                        file_handle.write(f"{i}. [Erro ao escrever item: {str(e)}]\n")
+            else:
+                file_handle.write(f"DADOS: {str(dados)[:1000]}\n")
+        except Exception as e:
+            file_handle.write(f"[ERRO AO ESCREVER DADOS: {str(e)}]\n")
 
     def salvar_erro(self, etapa: str, erro: Exception, contexto: Dict[str, Any] = None) -> str:
         """Salva erro com contexto completo"""

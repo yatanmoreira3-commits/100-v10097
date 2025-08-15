@@ -133,12 +133,12 @@ def create_app():
                 'version': '2.0.0',
                 'services': {
                     'ai_providers': {
-                        'available': len([p for p in ai_status.values() if p['available']]),
+                        'available': len([p for p, status in ai_status.items() if 'available' in str(status)]),
                         'total': len(ai_status),
                         'providers': ai_status
                     },
                     'search_providers': {
-                        'available': len([p for p in search_status.values() if p['available']]),
+                        'available': len([p for p, status in search_status.items() if status.get('available', False)]),
                         'total': len(search_status),
                         'providers': search_status
                     },
