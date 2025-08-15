@@ -152,9 +152,9 @@ class AntiObjectionSystem:
         }
 
     def generate_complete_anti_objection_system(
-        self,
-        objections_list: List[str],
-        avatar_data: Dict[str, Any],
+        self, 
+        objections_list: List[str], 
+        avatar_data: Dict[str, Any], 
         context_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Gera sistema completo anti-objeção"""
@@ -284,8 +284,8 @@ class AntiObjectionSystem:
         return True
 
     def _analyze_specific_objections(
-        self,
-        objections: List[str],
+        self, 
+        objections: List[str], 
         avatar_data: Dict[str, Any]
     ) -> List[Dict[str, Any]]:
         """Analisa objeções específicas do avatar"""
@@ -386,9 +386,9 @@ class AntiObjectionSystem:
         return mapped
 
     def _create_counter_attacks(
-        self,
-        mapped_objections: Dict[str, List[Dict[str, Any]]],
-        avatar_data: Dict[str, Any],
+        self, 
+        mapped_objections: Dict[str, List[Dict[str, Any]]], 
+        avatar_data: Dict[str, Any], 
         context_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Cria contra-ataques personalizados"""
@@ -412,10 +412,10 @@ class AntiObjectionSystem:
         return counter_attacks
 
     def _customize_universal_counter_attack(
-        self,
-        universal_data: Dict[str, Any],
-        specific_objections: List[Dict[str, Any]],
-        avatar_data: Dict[str, Any],
+        self, 
+        universal_data: Dict[str, Any], 
+        specific_objections: List[Dict[str, Any]], 
+        avatar_data: Dict[str, Any], 
         context_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Customiza contra-ataque universal"""
@@ -442,9 +442,9 @@ class AntiObjectionSystem:
         return customized
 
     def _create_hidden_counter_attacks(
-        self,
-        hidden_objections: List[Dict[str, Any]],
-        avatar_data: Dict[str, Any],
+        self, 
+        hidden_objections: List[Dict[str, Any]], 
+        avatar_data: Dict[str, Any], 
         context_data: Dict[str, Any]
     ) -> List[Dict[str, Any]]:
         """Cria contra-ataques para objeções ocultas"""
@@ -496,9 +496,9 @@ class AntiObjectionSystem:
         return f"Customizado para {segmento}: {counter_attack['contra_ataque']}"
 
     def _generate_personalized_scripts(
-        self,
-        counter_attacks: Dict[str, Any],
-        avatar_data: Dict[str, Any],
+        self, 
+        counter_attacks: Dict[str, Any], 
+        avatar_data: Dict[str, Any], 
         context_data: Dict[str, Any]
     ) -> Dict[str, List[str]]:
         """Gera scripts personalizados usando IA"""
@@ -582,7 +582,7 @@ RETORNE APENAS JSON VÁLIDO:
                 ]
             },
             "dinheiro": {
-                "objecao": "Não tenho orçamento disponível no momento",
+                "objecao": "Não tenho orçamento disponível no momento", 
                 "contra_ataque": f"O custo de não investir em {segmento} é maior que o investimento",
                 "scripts_customizados": [
                     f"ROI médio em {segmento} com método correto: 300-500% em 12 meses",
@@ -639,8 +639,8 @@ RETORNE APENAS JSON VÁLIDO:
         return "A única diferença entre você e quem já conseguiu é a decisão de agir"
 
     def _customize_universal_objections(
-        self,
-        avatar_data: Dict[str, Any],
+        self, 
+        avatar_data: Dict[str, Any], 
         context_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Customiza objeções universais para o contexto"""
@@ -688,9 +688,9 @@ RETORNE APENAS JSON VÁLIDO:
         return identified
 
     def _create_specific_examples(
-        self,
-        category: str,
-        avatar_data: Dict[str, Any],
+        self, 
+        category: str, 
+        avatar_data: Dict[str, Any], 
         context_data: Dict[str, Any]
     ) -> List[str]:
         """Cria exemplos específicos para cada categoria"""
@@ -715,8 +715,8 @@ RETORNE APENAS JSON VÁLIDO:
         return examples.get(category, [f"Exemplo específico para {category} em {segmento}"])
 
     def _create_emergency_arsenal(
-        self,
-        avatar_data: Dict[str, Any],
+        self, 
+        avatar_data: Dict[str, Any], 
         context_data: Dict[str, Any]
     ) -> List[str]:
         """Cria arsenal de emergência para objeções de última hora"""
@@ -818,13 +818,10 @@ RETORNE APENAS JSON VÁLIDO:
             "generation_timestamp": time.time(),
             "fallback_mode": True
         }
-
+    
     def create_comprehensive_objection_handling(self, segmento: str, produto: str, web_data: Dict = None, social_data: Dict = None) -> Dict[str, Any]:
         """Cria sistema completo de tratamento de objeções"""
         try:
-            # Import inside the method to avoid circular import if ai_manager depends on this class
-            from services.ai_manager import ai_manager
-
             prompt = f"""
             Crie um sistema COMPLETO de tratamento de objeções para:
 
@@ -856,7 +853,7 @@ RETORNE APENAS JSON VÁLIDO:
             Formato JSON detalhado.
             """
 
-            response = ai_manager.generate_content(prompt, max_tokens=4000)
+            response = self.ai_manager.generate_content(prompt, max_tokens=4000)
 
             import json
             try:

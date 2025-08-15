@@ -19,121 +19,10 @@ class PrePitchArchitect:
     """Arquiteto do Pré-Pitch Invisível - Orquestração Psicológica"""
 
     def __init__(self):
-        """Inicializa o Pre-Pitch Architect"""
-        self.sequence_templates = []
-        self.emotional_triggers = []
-        self.timing_patterns = []
-
+        """Inicializa o arquiteto de pré-pitch"""
+        from .ai_manager import ai_manager
+        self.ai_manager = ai_manager
         logger.info("Pre-Pitch Architect inicializado")
-
-    def create_pre_pitch_strategy(self, segmento: str, produto: str, web_data: dict = None, social_data: dict = None) -> dict:
-        """Cria estratégia de pré-pitch personalizada"""
-        try:
-            from .ai_manager import ai_manager
-
-            prompt = f"""
-            Crie uma estratégia de pré-pitch para:
-            - Segmento: {segmento}  
-            - Produto: {produto}
-
-            Defina 6 fases sequenciais:
-            1. Quebra (destruir ilusão confortável)
-            2. Exposição (revelar ferida real)
-            3. Indignação (criar revolta produtiva)
-            4. Vislumbre (mostrar o possível)
-            5. Tensão (amplificar gap)
-            6. Necessidade (tornar mudança inevitável)
-
-            Para cada fase forneça:
-            - objetivo: O que alcançar
-            - duracao: Tempo recomendado
-            - script: Roteiro específico
-            - resultado_esperado: Reação desejada
-
-            Retorne como JSON.
-            """
-
-            response = ai_manager.generate_content(prompt, max_tokens=3000)
-
-            import json
-            try:
-                strategy_data = json.loads(response)
-                if not isinstance(strategy_data, dict):
-                    strategy_data = {}
-            except:
-                strategy_data = {}
-
-            # Garante estrutura mínima
-            if 'fases' not in strategy_data:
-                strategy_data = self._generate_fallback_strategy(segmento, produto)
-
-            return {
-                'pre_pitch_strategy': strategy_data,
-                'duracao_total': '15-20 minutos',
-                'segmento_analisado': segmento,
-                'eficacia_estimada': '90%'
-            }
-
-        except Exception as e:
-            logger.error(f"❌ Erro ao criar estratégia de pré-pitch: {e}")
-            return self._generate_fallback_strategy(segmento, produto)
-
-    def _generate_fallback_strategy(self, segmento: str, produto: str) -> dict:
-        """Gera estratégia de pré-pitch de fallback"""
-
-        fallback_phases = [
-            {
-                'fase': 'quebra',
-                'objetivo': 'Destruir ilusão confortável',
-                'duracao': '3-5 minutos',
-                'script': f'A maioria dos {segmento} acredita que está crescendo, mas na verdade está apenas sobrevivendo.',
-                'resultado_esperado': 'Desconforto produtivo'
-            },
-            {
-                'fase': 'exposicao',
-                'objetivo': 'Revelar ferida real',
-                'duracao': '3-5 minutos',
-                'script': 'A concorrência está avançando enquanto você permanece na mesma posição.',
-                'resultado_esperado': 'Reconhecimento do problema'
-            },
-            {
-                'fase': 'indignacao',
-                'objetivo': 'Criar revolta produtiva',
-                'duracao': '2-3 minutos',
-                'script': 'Você não é incapaz, você só não tem as ferramentas certas.',
-                'resultado_esperado': 'Motivação para mudança'
-            },
-            {
-                'fase': 'vislumbre',
-                'objetivo': 'Mostrar o possível',
-                'duracao': '3-5 minutos',
-                'script': f'Imagine ter {produto} que realmente transforme seu negócio.',
-                'resultado_esperado': 'Esperança e interesse'
-            },
-            {
-                'fase': 'tensao',
-                'objetivo': 'Amplificar gap',
-                'duracao': '2-3 minutos',
-                'script': 'A diferença entre onde você está e onde poderia estar é enorme.',
-                'resultado_esperado': 'Urgência de mudança'
-            },
-            {
-                'fase': 'necessidade',
-                'objetivo': 'Tornar mudança inevitável',
-                'duracao': '2-3 minutos',
-                'script': 'Não mudar agora significa ficar para trás definitivamente.',
-                'resultado_esperado': 'Convicção de necessidade'
-            }
-        ]
-
-        return {
-            'pre_pitch_strategy': {
-                'fases': fallback_phases,
-                'total_fases': 6,
-                'escalada_emocional': 'Crescente ao longo das fases'
-            },
-            'status': 'fallback_strategy'
-        }
 
     def create_pre_pitch_strategy(self, segmento: str, produto: str, web_data: Dict = None, social_data: Dict = None) -> Dict[str, Any]:
         """Cria estratégia completa de pré-pitch invisível"""
@@ -455,7 +344,7 @@ Formato JSON estruturado.
                 },
                 {
                     'fase': 'vislumbre',
-                    'objetivo': 'Mostrar possibilities',
+                    'objetivo': 'Mostrar possibilidades',
                     'duracao': '5-7 minutos',
                     'intensidade': 'Esperançosa',
                     'drivers_utilizados': ['Método vs Sorte'],
@@ -655,6 +544,7 @@ RETORNE APENAS JSON VÁLIDO:
     "estado_mental_ideal": "Como devem estar mentalmente"
   }}
 }}
+```
 """
 
             response = ai_manager.generate_analysis(prompt, max_tokens=2500)
@@ -915,7 +805,7 @@ RETORNE APENAS JSON VÁLIDO:
                     },
                     {
                         'fase': 'vislumbre',
-                        'objetivo': 'Mostrar possibilities',
+                        'objetivo': 'Mostrar possibilidades',
                         'duracao': '5-7 minutos',
                         'intensidade': 'Esperançosa',
                         'drivers_utilizados': ['Método vs Sorte'],
@@ -944,7 +834,7 @@ RETORNE APENAS JSON VÁLIDO:
                 },
                 'desenvolvimento': {
                     'tempo': '8-12 minutos',
-                    'objetivo': 'Amplificar dor e mostrar possibilities',
+                    'objetivo': 'Amplificar dor e mostrar possibilidades',
                     'script': f"Cada dia que passa sem otimizar {segmento} é dinheiro saindo do seu bolso. Enquanto você está 'pensando', seus concorrentes estão agindo. Mas existe um caminho diferente...",
                     'momentos_criticos': [
                         "Cálculo da perda financeira por inação",

@@ -168,7 +168,7 @@ async function executeUnifiedAnalysis() {
         startProgressMonitoring();
 
         // Executa análise
-        const response = await fetch('/api/analyze', {
+        const response = await fetch('/api/unified_analysis/execute_unified_analysis', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

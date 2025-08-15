@@ -20,45 +20,17 @@ class MentalDriversArchitect:
 
     def __init__(self):
         """Inicializa o arquiteto de drivers mentais"""
-        self.universal_drivers = {
-            'urgencia_temporal': {
-                'nome': 'Urgência Temporal',
-                'gatilho_central': 'Tempo limitado para agir',
-                'definicao_visceral': 'Criar pressão temporal que força decisão imediata',
-                'aplicacao': 'Quando prospect está procrastinando'
-            },
-            'escassez_oportunidade': {
-                'nome': 'Escassez de Oportunidade',
-                'gatilho_central': 'Oportunidade única e limitada',
-                'definicao_visceral': 'Amplificar valor através da raridade',
-                'aplicacao': 'Para aumentar percepção de valor'
-            },
-            'prova_social': {
-                'nome': 'Prova Social Qualificada',
-                'gatilho_central': 'Outros como ele já conseguiram',
-                'definicao_visceral': 'Reduzir risco através de validação social',
-                'aplicacao': 'Para superar objeções de confiança'
-            },
-            'autoridade_tecnica': {
-                'nome': 'Autoridade Técnica',
-                'gatilho_central': 'Expertise comprovada',
-                'definicao_visceral': 'Estabelecer credibilidade através de conhecimento',
-                'aplicacao': 'Para construir confiança inicial'
-            },
-            'reciprocidade': {
-                'nome': 'Reciprocidade Estratégica',
-                'gatilho_central': 'Valor entregue antecipadamente',
-                'definicao_visceral': 'Criar obrigação psicológica de retribuição',
-                'aplicacao': 'Para gerar compromisso'
-            }
-        }
+        self.universal_drivers = [
+            "Medo da perda", "Desejo de ganho", "Urgência temporal", "Prova social",
+            "Autoridade", "Escassez", "Reciprocidade", "Compromisso", "Afinidade",
+            "Contraste", "Curiosidade", "Validação", "Pertencimento", "Status",
+            "Segurança", "Autonomia", "Propósito", "Progresso", "Reconhecimento"
+        ]
         logger.info("🧠 Mental Drivers Architect inicializado")
 
     def generate_custom_drivers(self, segmento: str, produto: str, publico: str, web_data: Dict = None, social_data: Dict = None) -> Dict[str, Any]:
         """Gera drivers mentais customizados baseados nos dados fornecidos"""
         try:
-            from services.ai_manager import ai_manager
-
             prompt = f"""
             Crie 19 drivers mentais psicológicos ESPECÍFICOS para:
 
@@ -93,7 +65,7 @@ class MentalDriversArchitect:
             }}
             """
 
-            response = ai_manager.generate_content(prompt, max_tokens=4000)
+            response = self.ai_manager.generate_content(prompt, max_tokens=4000)
 
             # Tenta fazer parse do JSON
             import json
@@ -101,23 +73,7 @@ class MentalDriversArchitect:
                 drivers_data = json.loads(response)
 
                 # Valida se tem pelo menos 19 drivers
-                if isinstance(drivers_data, dict) and 'drivers' in drivers_data and len(drivers_data['drivers']) >= 19:
-                    return drivers_data
-                elif isinstance(drivers_data, list):
-                    # Se retornou lista diretamente, converte para formato esperado
-                    drivers_data = {'drivers': drivers_data}
-                    
-                    # Completa até 19 drivers se necessário
-                    while len(drivers_data['drivers']) < 19:
-                        drivers_data['drivers'].append({
-                            "numero": len(drivers_data['drivers']) + 1,
-                            "nome": f"Driver Mental {len(drivers_data['drivers']) + 1}",
-                            "descricao": f"Driver customizado para {segmento}",
-                            "aplicacao": f"Aplicação específica para {produto}",
-                            "exemplo_pratico": f"Exemplo prático para {publico}",
-                            "impacto_conversao": "Alto - impacto psicológico significativo"
-                        })
-                    
+                if 'drivers' in drivers_data and len(drivers_data['drivers']) >= 19:
                     return drivers_data
                 else:
                     # Se não tem 19, completa
@@ -191,7 +147,38 @@ class MentalDriversArchitect:
 
     def _load_universal_drivers(self) -> Dict[str, Dict[str, Any]]:
         """Carrega drivers mentais universais"""
-        return self.universal_drivers
+        return {
+            'urgencia_temporal': {
+                'nome': 'Urgência Temporal',
+                'gatilho_central': 'Tempo limitado para agir',
+                'definicao_visceral': 'Criar pressão temporal que força decisão imediata',
+                'aplicacao': 'Quando prospect está procrastinando'
+            },
+            'escassez_oportunidade': {
+                'nome': 'Escassez de Oportunidade',
+                'gatilho_central': 'Oportunidade única e limitada',
+                'definicao_visceral': 'Amplificar valor através da raridade',
+                'aplicacao': 'Para aumentar percepção de valor'
+            },
+            'prova_social': {
+                'nome': 'Prova Social Qualificada',
+                'gatilho_central': 'Outros como ele já conseguiram',
+                'definicao_visceral': 'Reduzir risco através de validação social',
+                'aplicacao': 'Para superar objeções de confiança'
+            },
+            'autoridade_tecnica': {
+                'nome': 'Autoridade Técnica',
+                'gatilho_central': 'Expertise comprovada',
+                'definicao_visceral': 'Estabelecer credibilidade através de conhecimento',
+                'aplicacao': 'Para construir confiança inicial'
+            },
+            'reciprocidade': {
+                'nome': 'Reciprocidade Estratégica',
+                'gatilho_central': 'Valor entregue antecipadamente',
+                'definicao_visceral': 'Criar obrigação psicológica de retribuição',
+                'aplicacao': 'Para gerar compromisso'
+            }
+        }
 
     def _load_driver_templates(self) -> Dict[str, str]:
         """Carrega templates de drivers"""
@@ -202,8 +189,8 @@ class MentalDriversArchitect:
         }
 
     def generate_complete_drivers_system(
-        self,
-        avatar_data: Dict[str, Any],
+        self, 
+        avatar_data: Dict[str, Any], 
         context_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Gera sistema completo de drivers mentais customizados"""
@@ -298,9 +285,9 @@ class MentalDriversArchitect:
         return ideal_drivers[:5]  # Máximo 5 drivers
 
     def _generate_customized_drivers(
-        self,
-        ideal_drivers: List[Dict[str, Any]],
-        avatar_data: Dict[str, Any],
+        self, 
+        ideal_drivers: List[Dict[str, Any]], 
+        avatar_data: Dict[str, Any], 
         context_data: Dict[str, Any]
     ) -> List[Dict[str, Any]]:
         """Gera drivers customizados usando IA"""
@@ -340,10 +327,6 @@ RETORNE APENAS JSON VÁLIDO:
   }}
 ]
 """
-            # Nota: A importação de ai_manager foi movida para dentro do método generate_custom_drivers.
-            # Certifique-se de que ai_manager está acessível aqui ou reimporte se necessário.
-            # Assumindo que ai_manager está disponível globalmente ou importado em outro lugar.
-            from services.ai_manager import ai_manager
 
             response = ai_manager.generate_analysis(prompt, max_tokens=2000)
 

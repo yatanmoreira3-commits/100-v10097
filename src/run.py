@@ -14,7 +14,6 @@ from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
-import socket
 
 # Adiciona src ao path se necessário
 if 'src' not in sys.path:
@@ -40,7 +39,7 @@ def create_app():
     from services.environment_loader import environment_loader
 
     app = Flask(__name__)
-
+    
     # CONFIGURAÇÃO CRÍTICA DE PRODUÇÃO
     # Força ambiente de produção - NUNCA debug em produção
     FLASK_ENV = os.getenv('FLASK_ENV', 'production')
@@ -133,12 +132,12 @@ def create_app():
                 'version': '2.0.0',
                 'services': {
                     'ai_providers': {
-                        'available': len([p for p, status in ai_status.items() if isinstance(status, str) and 'available' in status]),
+                        'available': len([p for p in ai_status.values() if p['available']]),
                         'total': len(ai_status),
                         'providers': ai_status
                     },
                     'search_providers': {
-                        'available': len([p for p, status in search_status.items() if status.get('available', False)]),
+                        'available': len([p for p in search_status.values() if p['available']]),
                         'total': len(search_status),
                         'providers': search_status
                     },
@@ -177,10 +176,11 @@ def main():
 
         # Configurações do servidor
         host = os.getenv('HOST', '0.0.0.0')
-        # debug = os.getenv('FLASK_ENV', 'production') == 'development' # This line is kept for clarity in main, but app.config['DEBUG'] is set in create_app
+        port = int(os.getenv('PORT', 5000))
+        debug = os.getenv('FLASK_ENV', 'production') == 'development' # This line is kept for clarity in main, but app.config['DEBUG'] is set in create_app
 
-        print(f"🌐 Servidor: http://{host}:{os.getenv('PORT', 5000)}")
-        print(f"🔧 Modo: {'Desenvolvimento' if os.getenv('FLASK_ENV', 'production') == 'development' else 'Produção'}")
+        print(f"🌐 Servidor: http://{host}:{port}")
+        print(f"🔧 Modo: {'Desenvolvimento' if debug else 'Produção'}")
         print(f"📊 Interface: Análise Ultra-Detalhada de Mercado")
         print(f"🤖 IA: Gemini 2.5 Pro + Groq + Fallbacks")
         print(f"🔍 Pesquisa: WebSailor + Google + Múltiplos Engines")
@@ -196,8 +196,8 @@ def main():
         # Inicia servidor
         app.run(
             host=host,
-            port=int(os.getenv('PORT', 5000)),
-            debug=(os.getenv('FLASK_ENV', 'production') == 'development'),
+            port=port,
+            debug=debug,
             threaded=True
         )
 
@@ -209,32 +209,4 @@ def main():
         sys.exit(1)
 
 if __name__ == '__main__':
-    print("\n" + "="*60)
-    print("✅ ARQV30 Enhanced v2.0 PRONTO!")
-    print("="*60)
-    print("Pressione Ctrl+C para parar o servidor")
-    print("="*60)
-
-    def find_free_port():
-        """Encontra uma porta livre"""
-        for port in range(5000, 5100):
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            try:
-                sock.bind(('0.0.0.0', port))
-                sock.close()
-                return port
-            except OSError:
-                continue
-        return 5000
-
-    port = find_free_port()
-    print(f"🌐 Servidor iniciando na porta: {port}")
-
-    app = create_app() # Create app here to use the determined port
-
-    app.run(
-        host='0.0.0.0',
-        port=port,
-        debug=False,
-        threaded=True
-    )
+    main()

@@ -19,118 +19,13 @@ class VisualProofsGenerator:
     """Gerador de Provas Visuais Instantâneas"""
 
     def __init__(self):
-        """Inicializa o Visual Proofs Generator"""
-        self.proof_templates = []
-        self.categories = ['urgencia', 'credibilidade', 'social', 'autoridade', 'escassez']
-
+        """Inicializa o gerador de provas visuais"""
+        from .ai_manager import ai_manager
+        self.ai_manager = ai_manager
         logger.info("Visual Proofs Generator inicializado")
 
-    def generate_comprehensive_proofs(self, data: dict) -> dict:
-        """Gera provas visuais abrangentes"""
-        try:
-            from services.ai_manager import ai_manager
-
-            segmento = data.get('segmento', 'Empreendedores')
-            produto = data.get('produto', 'Serviço')
-
-            prompt = f"""
-            Crie 5 provas visuais estratégicas para:
-            - Segmento: {segmento}
-            - Produto: {produto}
-
-            Cada prova deve ter:
-            - nome: Nome da prova
-            - categoria: Tipo (urgencia/credibilidade/social/autoridade/escassez)
-            - objetivo: Objetivo psicológico
-            - implementacao: Como implementar
-            - impacto: Nível de impacto
-
-            Retorne como JSON array.
-            """
-
-            response = ai_manager.generate_content(prompt, max_tokens=2000)
-
-            import json
-            try:
-                proofs_data = json.loads(response)
-                if not isinstance(proofs_data, list):
-                    proofs_data = []
-            except:
-                proofs_data = []
-
-            # Garante 5 provas
-            while len(proofs_data) < 5:
-                category = self.categories[len(proofs_data) % len(self.categories)]
-                proofs_data.append({
-                    'nome': f'Prova Visual {len(proofs_data) + 1}',
-                    'categoria': category,
-                    'objetivo': f'Criar {category} para {segmento}',
-                    'implementacao': 'Implementação específica para o contexto',
-                    'impacto': 'Alto'
-                })
-
-            return {
-                'provas_visuais': proofs_data[:5],
-                'total_provas': len(proofs_data[:5]),
-                'categorias_cobertas': list(set([p.get('categoria', 'geral') for p in proofs_data[:5]])),
-                'segmento_analisado': segmento
-            }
-
-        except Exception as e:
-            logger.error(f"❌ Erro ao gerar provas visuais: {e}")
-            return self._generate_fallback_proofs(data)
-
-    def _generate_fallback_proofs(self, data: dict) -> dict:
-        """Gera provas de fallback"""
-
-        fallback_proofs = [
-            {
-                'nome': 'Prova de Urgência',
-                'categoria': 'urgencia',
-                'objetivo': 'Criar senso de urgência',
-                'implementacao': 'Demonstrar limitação de tempo ou vagas',
-                'impacto': 'Alto'
-            },
-            {
-                'nome': 'Prova de Credibilidade',
-                'categoria': 'credibilidade',
-                'objetivo': 'Estabelecer confiança',
-                'implementacao': 'Mostrar certificações e resultados',
-                'impacto': 'Alto'
-            },
-            {
-                'nome': 'Prova Social',
-                'categoria': 'social',
-                'objetivo': 'Validação por pares',
-                'implementacao': 'Exibir depoimentos e casos de sucesso',
-                'impacto': 'Médio'
-            },
-            {
-                'nome': 'Prova de Autoridade',
-                'categoria': 'autoridade',
-                'objetivo': 'Demonstrar expertise',
-                'implementacao': 'Apresentar experiência e conhecimento',
-                'impacto': 'Alto'
-            },
-            {
-                'nome': 'Prova de Escassez',
-                'categoria': 'escassez',
-                'objetivo': 'Valorizar oportunidade',
-                'implementacao': 'Mostrar limitação de acesso',
-                'impacto': 'Médio'
-            }
-        ]
-
-        return {
-            'provas_visuais': fallback_proofs,
-            'total_provas': 5,
-            'categorias_cobertas': ['urgencia', 'credibilidade', 'social', 'autoridade', 'escassez'],
-            'status': 'fallback_proofs'
-        }
-
-
-    def generate_visual_proofs(self, data: Dict[str, Any], *args, **kwargs) -> Dict[str, Any]:
-        """Gera provas visuais baseadas nos dados"""
+    def generate_comprehensive_proofs(self, data: Dict[str, Any], *args, **kwargs) -> Dict[str, Any]:
+        """Gera provas visuais abrangentes baseadas nos dados"""
         try:
             segmento = data.get('segmento', '')
             produto = data.get('produto', '')

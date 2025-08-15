@@ -379,7 +379,8 @@ class ComprehensiveReportGenerator:
     def _save_clean_report(self, report: Dict[str, Any], session_id: str):
         """Salva relatório limpo"""
         try:
-            # Salva relatório final limpo
+            # A função salvar_etapa não aceita session_id como parâmetro
+            # O session_id é gerenciado automaticamente pelo auto_save_manager
             salvar_etapa("relatorio_final_limpo", report, categoria="relatorios_finais")
             salvar_etapa("arsenal_completo", report, categoria="completas")
             logger.info("✅ Relatório limpo salvo com sucesso")

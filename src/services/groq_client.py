@@ -1,98 +1,101 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-ARQV30 Enhanced v2.0 - Groq Client CORRIGIDO
-Cliente para integração com Groq API
+Cliente para interagir com a API da Groq, servindo como um provedor de IA de alta velocidade.
 """
 
 import os
 import logging
+import time
 from typing import Optional
+
+try:
+    from groq import Groq
+    HAS_GROQ = True
+except ImportError:
+    HAS_GROQ = False
 
 logger = logging.getLogger(__name__)
 
 class GroqClient:
-    """Cliente para integração com Groq API"""
-    
+    """Cliente para gerar texto usando a API da Groq."""
+
     def __init__(self):
-        """Inicializa cliente Groq"""
-        self.api_key = os.getenv("GROQ_API_KEY")
-        self.base_url = "https://api.groq.com/openai/v1"
-        self.model = "llama3-70b-8192"
+        """Inicializa o cliente Groq."""
+        self.api_key = os.getenv('GROQ_API_KEY')
+        self.client = None
+        self.available = False
         
-        self.available = bool(self.api_key)
+        if not self.api_key:
+            logger.info("ℹ️ GROQ_API_KEY não configurada - Groq desabilitado")
+            return
         
-        if self.available:
-            # Testa conexão
-            try:
-                test_response = self._make_request("Test", max_tokens=5)
-                if test_response:
-                    logger.info("✅ Cliente Groq (llama3-70b-8192) inicializado com sucesso.")
-                else:
-                    self.available = False
-                    logger.warning("⚠️ Groq API não respondeu ao teste inicial")
-            except Exception as e:
-                self.available = False
-                logger.warning(f"⚠️ Erro ao testar Groq: {e}")
-        else:
-            logger.warning("⚠️ Groq API key não encontrada")
-    
-    def is_enabled(self) -> bool:
-        """Verifica se o cliente está habilitado"""
-        return self.available
-    
-    def generate(self, prompt: str, max_tokens: int = 1000) -> Optional[str]:
-        """Gera texto usando Groq - MÉTODO CORRIGIDO"""
+        if not HAS_GROQ:
+            logger.warning("⚠️ Biblioteca 'groq' não instalada. Execute: pip install groq")
+            return
         
-        if not self.available:
-            logger.warning("Groq não está disponível")
-            return None
+        if not self.api_key:
+            logger.info("ℹ️ GROQ_API_KEY não configurada - Groq desabilitado")
+            return
         
-        return self._make_request(prompt, max_tokens)
-    
-    def _make_request(self, prompt: str, max_tokens: int, temperature: float = 0.7) -> Optional[str]:
-        """Faz requisição para Groq API"""
+        if not HAS_GROQ:
+            logger.warning("⚠️ Biblioteca 'groq' não instalada. Execute: pip install groq")
+            return
         
         try:
-            import requests
-            
-            headers = {
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json"
-            }
-            
-            payload = {
-                "model": self.model,
-                "messages": [
+            self.client = Groq(api_key=self.api_key)
+            self.available = True
+            logger.info("✅ Cliente Groq (llama3-70b-8192) inicializado com sucesso.")
+        except Exception as e:
+            logger.error(f"❌ Falha ao inicializar o cliente Groq: {e}")
+            self.available = False
+
+            try:
+                self.client = Groq(api_key=self.api_key)
+                self.available = True
+                logger.info("✅ Cliente Groq (llama3-70b-8192) inicializado com sucesso.")
+            except Exception as e:
+                logger.error(f"❌ Falha ao inicializar o cliente Groq: {e}", exc_info=True)
+
+    def is_enabled(self) -> bool:
+        """Verifica se o cliente está configurado e pronto para uso."""
+        return self.available and self.client is not None
+
+    def generate(self, prompt: str, max_tokens: int = 8192) -> Optional[str]:
+        """
+        Gera texto usando um modelo da Groq.
+
+        Args:
+            prompt (str): O prompt para a geração de texto.
+            max_tokens (int): O número máximo de tokens a serem gerados.
+
+        Returns:
+            Optional[str]: O texto gerado ou None em caso de falha.
+        """
+        if not self.is_enabled():
+            raise Exception("Cliente Groq não está habilitado ou configurado corretamente.")
+
+        try:
+            start_time = time.time()
+            # Usando o modelo Llama3 70b, conhecido por sua performance e velocidade na Groq
+            chat_completion = self.client.chat.completions.create(
+                messages=[
                     {
                         "role": "user",
-                        "content": prompt
+                        "content": prompt,
                     }
                 ],
-                "max_tokens": max_tokens,
-                "temperature": temperature,
-                "stream": False
-            }
-            
-            response = requests.post(
-                f"{self.base_url}/chat/completions",
-                headers=headers,
-                json=payload,
-                timeout=60
+                model="llama3-70b-8192",
+                max_tokens=max_tokens,
+                temperature=0.4, # Temperatura um pouco mais baixa para consistência
             )
-            
-            if response.status_code == 200:
-                data = response.json()
-                content = data["choices"][0]["message"]["content"]
-                logger.info(f"✅ Groq gerou {len(content)} caracteres em {response.elapsed.total_seconds():.2f}s")
-                return content
-            else:
-                logger.error(f"Erro Groq: {response.status_code} - {response.text}")
-                return None
-                
+            response_text = chat_completion.choices[0].message.content
+            processing_time = time.time() - start_time
+            logger.info(f"✅ Groq gerou {len(response_text)} caracteres em {processing_time:.2f}s")
+            return response_text
         except Exception as e:
-            logger.error(f"Erro na requisição Groq: {str(e)}")
-            return None
+            logger.error(f"❌ Erro na chamada da API Groq: {e}", exc_info=True)
+            raise
 
-# Instância global
+# Instância singleton
 groq_client = GroqClient()
